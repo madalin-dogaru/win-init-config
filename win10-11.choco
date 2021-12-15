@@ -96,7 +96,10 @@ Invoke-WebRequest -Uri 'https://github.com/madalin-dogaru/win-init-config/raw/ma
 Invoke-WebRequest -Uri 'https://github.com/madalin-dogaru/win-init-config/raw/master/bginfo.bgi' -OutFile "C:\BGInfo\bginfo.bgi"
 New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\ -Name BGInfo -Value "C:\tools\sysinternals\Bginfo64.exe /accepteula /iC:\BGInfo\bginfo.bgi /timer:0"
 
+# Network Configuration
+## Create inbound firewall rule to allow a specific IP to communicate with the VM
+### New-NetFirewallRule -Name allow-inbound-192.168.0.125 -DisplayName 'allow-inbound-192.168.0.125' -Enabled True -Direction Inbound -Protocol ANY -Action Allow -Profile ANY -RemoteAddress 192.168.0.125
+
 # Cleanup
-$DesktopPath = [Environment]::GetFolderPath("Desktop")
 Remove-Item -Path "C:\Users\Public\Desktop\Boxstarter Shell.lnk"
 Remove-Item -Path C:\Temp\ -Recurse -Force
