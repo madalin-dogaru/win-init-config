@@ -3,32 +3,36 @@
 
 
 # 1. Set Powershell Execution Policy to unrestricted
-## Set-ExecutionPolicy Unrestricted
+## > Set-ExecutionPolicy Unrestricted
 
 # 2. Install Boxstarter
-## . { Invoke-WebRequest -useb https://boxstarter.org/bootstrapper.ps1 } | iex; Get-Boxstarter -Force
+## > . { Invoke-WebRequest -useb https://boxstarter.org/bootstrapper.ps1 } | iex; Get-Boxstarter -Force
 
 # 3. Install Windows10/11 Boxstarter package
-## $Cred = Get-Credential $env:USERNAME
-## Install-BoxstarterPackage -PackageName https://github.com/madalin-dogaru/win-init-config/raw/master/win10-11.choco -Credential $Cred
+## > $Cred = Get-Credential $env:USERNAME
+## > Install-BoxstarterPackage -PackageName https://github.com/madalin-dogaru/win-init-config/raw/master/win10-11.choco -Credential $Cred
 
 
-# Create the Temp/payloads directory and silence any GUI interaction
-New-Item -Path C:\ -Name Temp -ItemType Directory -ErrorAction SilentlyContinue
+# Create the temp/payloads directory and silence any GUI interaction
+New-Item -Path C:\ -Name code -ItemType Directory -ErrorAction SilentlyContinue
+New-Item -Path C:\ -Name temp -ItemType Directory -ErrorAction SilentlyContinue
 New-Item -Path C:\ -Name payloads -ItemType Directory -ErrorAction SilentlyContinue
 
-$env:TEMP = "C:\Temp"
-$env:TMP = "C:\Temp"
+$env:TEMP = "C:\temp"
+$env:TMP = "C:\temp"
 
 # Defender Configuration
+Set-MpPreference -MAPSReporting Disabled
 $Downloads = "C:\Users\dom\Downloads"
 Add-MpPreference -ExclusionPath $Downloads
-Add-MpPreference -ExclusionPath "C:\payloads\"
+Add-MpPreference -ExclusionPath "C:\code\"
 Add-MpPreference -ExclusionPath "C:\tools\"
-Set-MpPreference -MAPSReporting Disabled
+Add-MpPreference -ExclusionPath "C:\payloads\"
 Set-MpPreference -SubmitSamplesConsent NeverSend
 
 # Miscellaneous Packages Install
+choco install visualstudio2019community
+choco install vscode
 choco install firefox
 choco install googlechrome
 choco feature enable -n allowGlobalConfirmation
@@ -38,8 +42,6 @@ choco install heidisql
 choco install openjdk11
 choco install putty
 choco install sysinternals --params "/InstallDir:C:\tools\sysinternals"
-choco install visualstudio2019community
-choco install vscode
 
 # GitHub Cloning
 Invoke-WebRequest -Uri https://github.com/dnSpy/dnSpy/releases/latest/download/dnSpy-netframework.zip -OutFile "$env:TEMP\dnSpy-netframework.zip"
@@ -103,4 +105,4 @@ New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run\ -Nam
 
 # Cleanup
 Remove-Item -Path "C:\Users\Public\Desktop\Boxstarter Shell.lnk"
-Remove-Item -Path C:\Temp\ -Recurse -Force
+Remove-Item -Path C:\temp\ -Recurse -Force
